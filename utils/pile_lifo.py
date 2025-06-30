@@ -57,10 +57,10 @@ class PileLIFO:
 
     def affiche(self, show_last: bool = True) -> str:
         res = str(self.__maillon1.get_valeur())
-        m_pre = self.__maillon1
-        while m_pre.get_suivant() != None:
-            res += str(m_pre.get_valeur()) + " -> "
-            m_pre = m_pre.get_suivant()
+        m_suiv = self.__maillon1.get_suivant()
+        while m_suiv != None:
+            res += " -> " + str(m_suiv.get_valeur())
+            m_suiv = m_suiv.get_suivant()
 
         if show_last:
             res += " -> None"
