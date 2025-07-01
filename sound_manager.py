@@ -34,6 +34,11 @@ class SoundManager:
                 self.channels[channel]["playing"] = False
             self.channels[channel] = {"playing": self.channels[channel]["playing"], "sound_id": sound_id, "loop": loop, "priority": priority}
 
+    def stop_sound(self, channel: int):
+        self.channels[channel]["playing"] = False
+        self.channels[channel]["sound_id"] = None
+        pyxel.stop(channel)
+
     def update_channels(self):
         for i in range(4):
             value = self.channels[i]

@@ -25,19 +25,25 @@ class Element:
     def get_key_options(self) -> list:
         return self.__key_options
 
+    def launch(self):
+        pass
+
     def update(self, sound_manager: SoundManager=None):
         '''
         Method to update the actions that are happening
 
         Parameters:
-            current_global_selection (int): What option is currently selected.
+            sound_manager (SoundManager): The sound manager to use for playing sounds.
 
         Returns:
-            A tuple (int, list) of the current option selected and the options available after the update.
+            False if the element is still active, True if it should close.
         '''
         pass
 
     def draw(self, global_color, x, y, width, height):
+        pass
+
+    def close(self):
         pass
 
     def __str__(self) -> str:

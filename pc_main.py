@@ -6,6 +6,7 @@ from utils.maillon import Maillon
 from sound_manager import SoundManager
 from element import Element
 from elements.quit import Quit
+from elements.pac_man.jeu import JeuPacMan
 
 class PCMain:
     def __init__(self):
@@ -13,6 +14,7 @@ class PCMain:
         #* Initialize all global variables
         self.init_globals()
 
+        # FIXME pyxel initialisation is now slow for whatever reasons
         pyxel.init(self.screen_width, self.screen_height, title="PCGame", fps=self.fps, quit_key=pyxel.KEY_NONE)
 
         #self.toggle_fullscreen()
@@ -30,8 +32,8 @@ class PCMain:
 
         #* Basic UI variables
         self.current_selection = 0
-        self.current_selection_options = [Element("Option 1"), Element("Option 2"), Element("Quit")]
-        self.current_elements = PileLIFO(Maillon(Element("Main", options=[Element("Option 1"), Element("Option 2"), Quit()])))
+        self.current_selection_options = []
+        self.current_elements = PileLIFO(Maillon(Element("Main", options=[Element("Option 1"), Element("Option 2"), JeuPacMan(), Quit()])))
         self.current_key_options = []
 
         self.__basic_ui_key_options = [("[UP]", "Move up"), ("[DOWN]", "Move down"), ("[SPACE]", "Select option"), ("[BACKSPACE]", "Go back")]
@@ -67,17 +69,17 @@ class PCMain:
                 self.current_selection -= 1
                 self.sdm.play_sound(1, 3, reset=True)
             elif pyxel.btnp(pyxel.KEY_SPACE) and self.current_selection < len(self.current_selection_options):
-                self.current_elements.empiler(self.current_selection_options[self.current_selection])
-                self.sdm.play_sound(1, 0, reset=True)
+                self.open_element(self.current_selection_options[self.current_selection])
             elif pyxel.btnp(pyxel.KEY_BACKSPACE) and self.current_elements.taille() > 1:
-                self.current_elements.depiler()
-                self.sdm.play_sound(1, 1, reset=True)
+                self.close_element()
 
         else:
             self.current_selection = 0
             self.current_selection_options = []
             self.current_key_options = element.get_key_options()
-            element.update(sound_manager=self.sdm)
+            element_quit = element.update(sound_manager=self.sdm)
+            if element_quit:
+                self.close_element()
 
     def draw(self):
         pyxel.cls(0)
@@ -122,6 +124,18 @@ class PCMain:
                 x += len(text) * 4
 
         pyxel.text(x, y, "[F11] Toggle Fullscreen", self.global_color)
+
+    def open_element(self, element: Element):
+        self.sdm.play_sound(1, 0, reset=True)
+        self.sdm.stop_sound(0)
+        self.current_elements.empiler(element)
+        self.current_elements.afficher_main().launch()
+
+    def close_element(self):
+        self.current_elements.afficher_main().close()
+        self.current_elements.depiler()
+        pyxel.load("assets/main.pyxres")
+        self.sdm.play_sound(1, 1, reset=True)
 
 if __name__ == "__main__":
     PCMain()
