@@ -224,14 +224,15 @@ class Jeu:
                 self.launch_game(self.levels_laby[self.level%len(self.levels_laby)])
 
         elif konami_code_index == len(konami_code):
-            if pyxel.frame_count > self.start_frame and pyxel.frame_count < self.start_frame + 50:
+            if pyxel.frame_count > self.start_frame and pyxel.frame_count < self.start_frame + 142:
                 self.pac_man.move(self.L)
 
     def draw(self, start_x, start_y, base_x):
         #pyxel.cls(0)
 
-        self.show_leaderboard(20, base_x+15, start_y+10)
-        if not self.leaderboard_menu:
+        if self.game or self.game_over or self.menu or self.leaderboard:
+            self.show_leaderboard(20, base_x+15, start_y+10)
+        if (self.game or self.game_over or self.menu) and not self.leaderboard_menu:
             self.show_leaderboard(20, base_x+360, start_y+10, start=20, label=False)
 
         if self.game:
@@ -286,22 +287,22 @@ class Jeu:
                 self.menu = True
 
         else:
-            self.L.affiche(self.pac_man, self.panic_mode, self.panic_time, self.difficulty)
+            self.L.affiche(self.pac_man, self.panic_mode, self.panic_time, self.difficulty, start_x, start_y)
             self.L.sprites = random.randint(0, 5)
 
-            self.pac_man.affiche()
+            self.pac_man.affiche(start_x, start_y)
 
-            if pyxel.frame_count >= self.start_frame + 40:
+            if pyxel.frame_count >= self.start_frame + 120:
                 pyxel.text(start_x+69, start_y+170, "YOU SHOULDN'T BE THERE", pyxel.frame_count%2+1)
-            if pyxel.frame_count >= self.start_frame + 50:
+            if pyxel.frame_count >= self.start_frame + 142:
                 pyxel.blt(start_x+90, start_y+90, 1, 0, 168, 16, 16, 0)
                 pyxel.blt(start_x+115, start_y+90, 1, 16, 168, 16, 16, 0)
-            if pyxel.frame_count >= self.start_frame + 51:
+            if pyxel.frame_count >= self.start_frame + 144:
                 pyxel.blt(start_x+80, start_y+130, 1, 0, 184, 16, 16, 0)
                 pyxel.blt(start_x+125, start_y+130, 1, 16, 184, 16, 16, 0)
-            if pyxel.frame_count >= self.start_frame + 52:
+            if pyxel.frame_count >= self.start_frame + 146:
                 pyxel.cls(7)
-            if pyxel.frame_count >= self.start_frame + 53:
+            if pyxel.frame_count >= self.start_frame + 148:
                 exit(0)
 
     def death_anim(self, start_x, start_y):
@@ -449,7 +450,7 @@ class Jeu:
         pyxel.text(start_x+100, start_y+185, "Save", colors["save"])
         pyxel.text(start_x+100, start_y+205, "Menu", colors["menu"])
 
-        self.show_leaderboard(5, start_x+65, start_y+15)
+        #self.show_leaderboard(5, start_x+65, start_y+15)
 
         pyxel.text(start_x+60, start_y+230, "Press [SPACE] to continue", 13)
         pyxel.text(start_x+35, start_y+240, "Press [ARROW KEYS] to change selection", 13)

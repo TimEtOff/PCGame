@@ -2,7 +2,8 @@ from utils.element import Element
 
 class Quit(Element):
     def __init__(self):
-        super().__init__("Quit", False)
+        super().__init__("Quit", True, basic_open=False)
 
-    def update(self, sound_manager=None):
+    def launch(self):
+        super().launch()
         exit(0)

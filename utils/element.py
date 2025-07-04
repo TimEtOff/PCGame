@@ -7,13 +7,15 @@ class Element:
                  basic_ui: bool = True,
                  options: list = [],
                  key_options: list = [],
-                 basic_action: callable = None
+                 basic_action: callable = None,
+                 basic_open: bool = True
                  ):
         self.__display_name = display_name
         self.__basic_ui = basic_ui
-        self.__options = options
+        self.options = options
         self.__key_options = key_options
         self.__basic_action = basic_action
+        self.basic_open = basic_open
 
     def get_display_name(self) -> str:
         return self.__display_name
@@ -22,7 +24,7 @@ class Element:
         return self.__basic_ui
 
     def get_options(self) -> list:
-        return self.__options
+        return self.options
 
     def get_key_options(self) -> list:
         return self.__key_options
