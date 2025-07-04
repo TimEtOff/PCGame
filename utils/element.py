@@ -1,4 +1,4 @@
-from sound_manager import SoundManager
+from utils.sound_manager import SoundManager
 
 '''Interface for elements in the UI. Each element need a an update and draw method.'''
 class Element:
@@ -6,12 +6,14 @@ class Element:
                  display_name: str,
                  basic_ui: bool = True,
                  options: list = [],
-                 key_options: list = []
+                 key_options: list = [],
+                 basic_action: callable = None
                  ):
         self.__display_name = display_name
         self.__basic_ui = basic_ui
         self.__options = options
         self.__key_options = key_options
+        self.__basic_action = basic_action
 
     def get_display_name(self) -> str:
         return self.__display_name
@@ -26,7 +28,8 @@ class Element:
         return self.__key_options
 
     def launch(self):
-        pass
+        if self.is_basic_ui() and self.__basic_action is not None:
+            self.__basic_action()
 
     def update(self, sound_manager: SoundManager=None):
         '''

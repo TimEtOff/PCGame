@@ -2,7 +2,7 @@ import pyxel
 import csv
 import random
 
-from element import Element
+from utils.element import Element
 
 from elements.pac_man.ghost import *
 from elements.pac_man.pac_man import *
@@ -26,7 +26,6 @@ death_anim_coords = {"Blinky": (0, 32), "Inky": (0, 64), "Clyde": (0, 128), "Pin
 konami_code = [pyxel.KEY_UP, pyxel.KEY_UP, pyxel.KEY_DOWN, pyxel.KEY_DOWN, pyxel.KEY_LEFT, pyxel.KEY_RIGHT, pyxel.KEY_LEFT, pyxel.KEY_RIGHT, pyxel.KEY_B, pyxel.KEY_A]
 konami_code_index = 0
 
-#TODO Add popup dialog windows
 
 class Jeu:
 

@@ -1,4 +1,4 @@
-from element import Element
+from utils.element import Element
 
 class Quit(Element):
     def __init__(self):

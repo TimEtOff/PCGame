@@ -181,7 +181,12 @@ class Lab:
 
     def get_case(self, coords):
         i, j = coords
-        return self.grille[i][j]
+        res = 0
+        try:
+            res = self.grille[i][j]
+        except IndexError:
+            pass
+        return res # FIXME Sometimes is out of bounds when using tp??
 
     def set_case(self, coords, val):
         i, j = coords

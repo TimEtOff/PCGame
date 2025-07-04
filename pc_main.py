@@ -3,8 +3,9 @@ import pyxel
 
 from utils.pile_lifo import PileLIFO
 from utils.maillon import Maillon
-from sound_manager import SoundManager
-from element import Element
+from utils.sound_manager import SoundManager
+from utils.element import Element
+from utils.popup import Popup
 from elements.quit import Quit
 from elements.pac_man.jeu import JeuPacMan
 
@@ -33,8 +34,24 @@ class PCMain:
         #* Basic UI variables
         self.current_selection = 0
         self.current_selection_options = []
-        self.current_elements = PileLIFO(Maillon(Element("Main", options=[Element("Option 1"), Element("Option 2"), JeuPacMan(), Quit()])))
+
+        #* For tests
+        def close_popup_action():
+            self.current_popup = None
+
+        def close_popup_action2():
+            self.current_popup = None
+            self.close_element()
+
+        def open_test_popup():
+            self.current_popup = Popup("Test Popup", "This is a test popup message.\nIt can span multiple lines.", "OK", "Cancel", option1_action=close_popup_action, option2_action=close_popup_action2)
+
+        options=[Element("Games", options=[JeuPacMan(), Element("DOOM.exe")]), Element("Documents", options=[Element("Ideas.docx"), Element("Tests.docx")]), Element("Trojan.exe")]
+        #*
+
+        self.current_elements = PileLIFO(Maillon(Element("Main", options=[Element("Files", basic_action=open_test_popup, options=options), Element("Option 2"), Quit()])))
         self.current_key_options = []
+        self.current_popup = None
 
         self.__basic_ui_key_options = [("[UP]", "Move up"), ("[DOWN]", "Move down"), ("[SPACE]", "Select option"), ("[BACKSPACE]", "Go back")]
 
@@ -56,30 +73,33 @@ class PCMain:
         self.sdm.update_channels()
 
         element: Element = self.current_elements.afficher_main()
-        if element.is_basic_ui():
-            self.sdm.play_sound(0, 2, loop=True, priority=False)
+        if self.current_popup is None:
+            if element.is_basic_ui():
+                self.sdm.play_sound(0, 2, loop=True, priority=False)
 
-            self.current_selection_options = element.get_options()
-            self.current_key_options = self.__basic_ui_key_options
+                self.current_selection_options = element.get_options()
+                self.current_key_options = self.__basic_ui_key_options
 
-            if pyxel.btnp(pyxel.KEY_DOWN) and self.current_selection < len(self.current_selection_options):
-                self.current_selection += 1
-                self.sdm.play_sound(1, 3, reset=True)
-            elif pyxel.btnp(pyxel.KEY_UP) and self.current_selection > 0:
-                self.current_selection -= 1
-                self.sdm.play_sound(1, 3, reset=True)
-            elif pyxel.btnp(pyxel.KEY_SPACE) and self.current_selection < len(self.current_selection_options):
-                self.open_element(self.current_selection_options[self.current_selection])
-            elif pyxel.btnp(pyxel.KEY_BACKSPACE) and self.current_elements.taille() > 1:
-                self.close_element()
+                if pyxel.btnp(pyxel.KEY_DOWN) and self.current_selection < len(self.current_selection_options)-1:
+                    self.current_selection += 1
+                    self.sdm.play_sound(1, 3, reset=True)
+                elif pyxel.btnp(pyxel.KEY_UP) and self.current_selection > 0:
+                    self.current_selection -= 1
+                    self.sdm.play_sound(1, 3, reset=True)
+                elif pyxel.btnp(pyxel.KEY_SPACE) and self.current_selection < len(self.current_selection_options):
+                    self.open_element(self.current_selection_options[self.current_selection])
+                elif pyxel.btnp(pyxel.KEY_BACKSPACE) and self.current_elements.taille() > 1:
+                    self.close_element()
 
-        else:
-            self.current_selection = 0
-            self.current_selection_options = []
-            self.current_key_options = element.get_key_options()
-            element_quit = element.update(sound_manager=self.sdm)
-            if element_quit:
-                self.close_element()
+                element.update(sound_manager=self.sdm)
+
+            else:
+                self.current_selection = 0
+                self.current_selection_options = []
+                self.current_key_options = element.get_key_options()
+                element_quit = element.update(sound_manager=self.sdm)
+                if element_quit:
+                    self.close_element()
 
     def draw(self):
         pyxel.cls(0)
@@ -107,6 +127,9 @@ class PCMain:
                     pyxel.text(x, y + 10*i, self.current_selection_options[i].get_display_name(), self.global_color)
         else:
             element.draw(self.global_color, self.draw_x, self.draw_y, self.draw_width, self.draw_height)
+
+        if self.current_popup is not None:
+            self.current_popup.draw(self.global_color, self.draw_x, self.draw_y, self.draw_width, self.draw_height)
 
     def draw_key_options(self):
         x, y = self.draw_x, self.draw_y + self.draw_height + 5
