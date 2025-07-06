@@ -8,7 +8,8 @@ from utils.element import Element
 from utils.popup import Popup
 from utils.settings import Settings
 from elements.quit import Quit
-from elements.pac_man.jeu import JeuPacMan
+from elements.games.pac_man.jeu import JeuPacMan
+from elements.games.doom.game import Doom
 
 class PCMain:
     def __init__(self):
@@ -42,7 +43,7 @@ class PCMain:
         def open_test_popup():
             self.current_popup = Popup("Test Popup", "This is a test popup message.\nIt can span multiple lines.", "OK", "Cancel", option1_action=close_popup_action, option2_action=close_popup_action2)
 
-        options=[Element("Games", options=[JeuPacMan(), Element("DOOM.exe")]), Element("Documents", options=[Element("Ideas.docx"), Element("Tests.docx")]), Element("Trojan.exe")]
+        options=[Element("Games", options=[JeuPacMan(), Doom()]), Element("Documents", options=[Element("Ideas.docx"), Element("Tests.docx")]), Element("Trojan.exe")]
         #*
 
         self.current_elements = PileLIFO(Maillon(Element("Main", options=[Element("Files", basic_action=open_test_popup, options=options), self.settings, Quit()])))
@@ -58,6 +59,7 @@ class PCMain:
         self.draw_width = self.settings.screen_width - (2 * self.draw_x)
         self.draw_height = self.settings.screen_height - (3 * self.draw_y)
 
+# TODO When basic_ui, make the selection smarter (depends on the number of elements available and if opening or closing)
     def update(self):
         if pyxel.btnp(pyxel.KEY_F11):
             self.settings.toggle_fullscreen()
@@ -94,6 +96,7 @@ class PCMain:
                     self.close_element()
 
     def draw(self):
+        pyxel.pal()
         pyxel.cls(0)
 
         if pyxel.frame_count % (self.settings.fps*random.randint(2, 5)) == 0:
@@ -144,7 +147,7 @@ class PCMain:
         self.settings.sdm.play_sound(1, 0, reset=True)
         self.settings.sdm.stop_sound(0)
         self.current_elements.empiler(element)
-        self.current_elements.afficher_main().launch()
+        self.current_elements.afficher_main().launch(self.settings.sdm)
         if not self.current_elements.afficher_main().basic_open:
             self.close_element(no_sound=True)
 

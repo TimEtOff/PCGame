@@ -4,9 +4,9 @@ import random
 
 from utils.element import Element
 
-from elements.pac_man.ghost import *
-from elements.pac_man.pac_man import *
-from elements.pac_man.labyrinthe import *
+from elements.games.pac_man.ghost import *
+from elements.games.pac_man.pac_man import *
+from elements.games.pac_man.labyrinthe import *
 
 #* Sounds doc
 # Ch 0: Music
@@ -44,13 +44,13 @@ class Jeu:
         self.difficulty = 1
 
         self.leaderboard = []
-        with open("elements/pac_man/assets/leaderboard.csv", "r", newline='') as csvfile:
+        with open("elements/games/pac_man/assets/leaderboard.csv", "r", newline='') as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
                     self.leaderboard.append({"name":row[0], "score":int(row[1]), "level":row[2], "diff":row[3]})
 
         # Lancement du jeu
-        pyxel.load("elements/pac_man/assets/sprites.pyxres")
+        pyxel.load("elements/games/pac_man/assets/sprites.pyxres")
         #pyxel.run(self.update, self.draw)
 
     def launch_game(self, laby, init=False):
@@ -428,9 +428,6 @@ class Jeu:
             if self.save_sel > 0:
                 self.save_sel -= 1
 
-        if pyxel.btnp(pyxel.KEY_BACKSPACE):
-            self.goto_menu()
-
         if sel[self.save_sel] == "name":
             self.name_entering()
             if pyxel.btnp(pyxel.KEY_SPACE):
@@ -494,7 +491,7 @@ class Jeu:
         diffs = ["E","M","H","I"]
         self.leaderboard.append({"name":self.name, "score":self.score, "level":"LVL"+str(self.level), "diff":diffs[self.difficulty]})
         self.sort_leaderboard()
-        with open("assets/leaderboard.csv", "w", newline='') as csvfile:
+        with open("elements/games/pac_man/assets/leaderboard.csv", "w", newline='') as csvfile:
             writer = csv.writer(csvfile)
             for row in self.leaderboard:
                 writer.writerow([row["name"], row["score"], row["level"], row["diff"]])
@@ -744,8 +741,9 @@ class JeuPacMan(Element):
         super().__init__("Pac-man.pyxapp", basic_ui=False)
         self.fps = 10
 
-    def launch(self):
+    def launch(self, sound_manager):
         self.game = Jeu([laby_pacman, laby_ms_pacman_1, laby_ms_pacman_2, laby_ms_pacman_3, laby_ms_pacman_4, laby_prototype])
+        sound_manager.stop_all()
 
     def update(self, sound_manager):
         quit = False

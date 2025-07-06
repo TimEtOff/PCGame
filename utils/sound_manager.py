@@ -39,6 +39,12 @@ class SoundManager:
         self.channels[channel]["sound_id"] = None
         pyxel.stop(channel)
 
+    def stop_all(self):
+        self.stop_sound(0)
+        self.stop_sound(1)
+        self.stop_sound(2)
+        self.stop_sound(3)
+
     def update_channels(self):
         for i in range(4):
             value = self.channels[i]

@@ -1,7 +1,7 @@
 import pyxel
 import copy
 from random import choice
-from elements.pac_man.node import Node
+from elements.games.pac_man.node import Node
 import random
 
 class Lab:
